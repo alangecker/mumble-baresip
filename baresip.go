@@ -50,7 +50,7 @@ func StartBaresip(conf BaresipConfig) *exec.Cmd {
 	cmd := exec.Command("baresip",
 		"-f", conf.StoragePath,
 		// TODO: escape strings
-		"-e", "/uanew <sip:"+conf.Username+"@"+conf.Server+":"+string(conf.Port)+">;auth_pass="+conf.Password,
+		"-e", "/uanew <sip:"+conf.Username+"@"+conf.Server+":"+string(conf.Port)+">;auth_pass="+conf.Password+";regint=0",
 		"-e", "/dial "+conf.CallNumber)
 
 	stdin2, err := cmd.StdinPipe()

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"strconv"
 
 	"github.com/xthexder/go-jack"
 )
@@ -23,19 +24,25 @@ func main() {
 
 	dtmfTones := flag.String("dtmf", "", "Digits to enter after call initiates")
 	dtmfWait := flag.Uint("dtmf-wait", 10, "Seconds to wait until DTMF tones are played")
+	index := flag.Uint("index", 1, "Index of the mumble-baresip client. Must be unique if multiple instances are running")
 
-	// mumblePort := flag.
 	flag.Parse()
 
-	fmt.Println(mumbleHost)
+	jackPrefix := "ms"+strconv.FormatUint(uint64(*index), 10)+"_"
+
+	fmt.Println(*sipServer)
+	if *sipUsername == "" || *sipPassword == "" || *sipCallNumber == "" {
+		fmt.Println("Error: fields are missing, make sure you specify sip-username, sip-password and call-number")
+		return
+	}
 
 	StartMumble(MumbleConfig{
 		Username:    *mumbleUsername,
 		Host:        *mumbleHost,
 		Port:        *mumblePort,
 		Channel:     *mumbleChannel,
-		StoragePath: "/tmp/mumble-sip",
-		JackName:    "ms1_mumble",
+		StoragePath: "/tmp/mumble-sip"+strconv.FormatUint(uint64(*index), 10),
+		JackName:    jackPrefix+"mumble",
 	})
 
 	StartBaresip(BaresipConfig{
@@ -44,8 +51,8 @@ func main() {
 		Username:    *sipUsername,
 		Password:    *sipPassword,
 		CallNumber:  *sipCallNumber,
-		StoragePath: "/tmp/mumble-sip",
-		JackName:    "ms1_sip",
+		StoragePath: "/tmp/mumble-sip"+strconv.FormatUint(uint64(*index), 10),
+		JackName:    jackPrefix+"sip",
 	})
 
 	client, _ := jack.ClientOpen("Example Client", jack.NoStartServer)
@@ -58,29 +65,29 @@ func main() {
 	time.Sleep(2 * time.Second)
 
 	// get mumble ports
-	mumbleSource := client.GetPortByName("ms1_mumble:output_1")
+	mumbleSource := client.GetPortByName(jackPrefix+"mumble:output_1")
 	for mumbleSource == nil {
 		log.Println("jack: could not get mumble source.")
 		log.Println("Maybe mumble is still starting? try again in 2s")
 		time.Sleep(2 * time.Second)
-		mumbleSource = client.GetPortByName("ms1_mumble:output_1")
+		mumbleSource = client.GetPortByName(jackPrefix+"mumble:output_1")
 	}
 
-	mumbleSink := client.GetPortByName("ms1_mumble:input")
+	mumbleSink := client.GetPortByName(jackPrefix+"mumble:input")
 	if mumbleSink == nil {
 		log.Fatalln("jack: could not get mumble sink")
 	}
 
 	// get baresip ports
-	baresipSource := client.GetPortByName("baresip:output_1")
+	baresipSource := client.GetPortByName(jackPrefix+"sip:output_1")
 	for baresipSource == nil {
 		log.Fatalln("jack: could not get baresip source")
 		log.Println("Maybe baresip is still starting? try again in 2s")
 		time.Sleep(2 * time.Second)
-		baresipSource = client.GetPortByName("baresip:output_1")
+		baresipSource = client.GetPortByName(jackPrefix+"sip:output_1")
 	}
 
-	baresipSink := client.GetPortByName("baresip-01:input_1")
+	baresipSink := client.GetPortByName(jackPrefix+"sip-01:input_1")
 	if baresipSink == nil {
 		log.Fatalln("jack: could not get baresip sink")
 	}

@@ -9,11 +9,11 @@ The aim was to be able to interconnect a 'normal' telefon conference with a mumb
 - Working go environment
 - Running `jackd`
 - `mumble` installed
-- `baresip` installed
+- `baresip` >=1.0.0 installed (currently you have to build it by yourself)
 
 ## Usage
 ```bash
-$ git clone git@github.com:alangecker/mumble-baresip.git
+$ git clone https://github.com/alangecker/mumble-baresip.git
 $ go build
 $ ./mumble-baresip \
   -mumble-host mumble.yourserver.com \
@@ -30,4 +30,3 @@ $ ./mumble-baresip \
 - quick and dirty - don't expect stability at all!
 - first time writing _go_ ever.
 - doesn't handle any responses from baresip or mumble (like call failures, disconnects, dialogs in Mumble,...)
-- currently you can only run it once because baresip in the latest version 0.6.6 doesn't support different jack names yet, but it will in the next release (see [baresip#1025](https://github.com/baresip/baresip/pull/1025)).
