@@ -6,9 +6,12 @@ this project starts and configures automatically with a single CLI command both,
 The aim was to be able to interconnect a 'normal' telefon conference with a mumble room.
 
 ## Requirements
-- Working go environment
+- Working go 1.14 environment
+  * `go-jack` is currently broken with go 1.15
 - Running `jackd`
-- `mumble` installed
+- `mumble` installed 
+  * compiled with jack support. Note: the one shipped with Debian 10 doesn't! (2020-09-13)
+    -> check `ldd $(which mumble) | grep libjack`
 - `baresip` >=1.0.0 installed (currently you have to build it by yourself)
 
 ## Usage
