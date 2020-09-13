@@ -16,7 +16,7 @@ audio_player		jack
 audio_source		jack
 audio_alert		jack
 jack_connect_ports	no
-jack_client_name foo
+jack_client_name {{ .JackName }}
 ausrc_srate		48000
 auplay_srate		48000
 #ausrc_channels		0
@@ -46,7 +46,7 @@ rtp_stats		no
 #------------------------------------------------------------------------------
 # Modules
 
-#module_path		/usr/lib/baresip/modules
+module_path		/usr/local/lib/baresip/modules
 
 # UI Modules
 module			stdio.so
